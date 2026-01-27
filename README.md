@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # XYZ E-commerce - Plateforme de Commerce Électronique
 
 ## Description du Projet
@@ -87,7 +88,7 @@ nwe project avec momo/
 
 1. **Cloner le dépôt** :
    ```bash
-   git clone <url-du-depot>
+   git clone https://github.com/Nathan355/projet-momo-nt.git
    cd "nwe project avec momo"
    ```
 
@@ -112,3 +113,6 @@ Développé pour l'entreprise XYZ - 2026
 ## Licence
 
 Tous droits réservés - Entreprise XYZ
+=======
+# projet-momo-nt
+>>>>>>> 895b6af76a00d50633fd79a265300151b2b8d270
