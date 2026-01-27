@@ -32,7 +32,6 @@
         <section class="cart-section">
             <h1>Votre Panier</h1>
             <div class="cart-container" id="cart-items-container">
-                <!-- Les articles du panier seront insérés ici par JavaScript -->
                 <p id="empty-cart-message">Votre panier est vide pour le moment.</p>
             </div>
             <div class="cart-summary">

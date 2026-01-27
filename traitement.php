@@ -32,22 +32,17 @@
         <section class="content-page-section">
             <?php
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                // Sanitize and retrieve form data
                 $nom = htmlspecialchars(trim($_POST['nom']));
                 $prenom = htmlspecialchars(trim($_POST['prenom']));
                 $email = htmlspecialchars(trim($_POST['email']));
                 $sujet = htmlspecialchars(trim($_POST['sujet']));
                 $message = htmlspecialchars(trim($_POST['message']));
-
-                // Server-side validation
                 $errors = [];
                 if (empty($nom)) { $errors[] = "Le nom est requis."; }
                 if (empty($prenom)) { $errors[] = "Le prénom est requis."; }
                 if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) { $errors[] = "Une adresse email valide est requise."; }
                 if (empty($sujet)) { $errors[] = "Veuillez choisir un sujet."; }
                 if (empty($message) || strlen($message) < 10) { $errors[] = "Le message doit contenir au moins 10 caractères."; }
-
-                // Display result
                 if (count($errors) > 0) {
                     echo "<h1>Erreur de soumission</h1>";
                     echo "<p class='subtitle'>Votre formulaire contient des erreurs. Veuillez retourner en arrière.</p>";
@@ -58,7 +53,6 @@
                     echo "</ul></div>";
                     echo '<p><a href="contact.php" class="cta-button" style="display: inline-block; margin-top: 1rem;">Retour au formulaire</a></p>';
                 } else {
-                    // Here you would typically send an email or save to the database
                     echo "<h1>Message envoyé !</h1>";
                     echo "<p class='subtitle'>Merci, $prenom. Votre message a bien été reçu. Nous vous répondrons dans les plus brefs délais.</p>";
                     echo "<div class='legal-content'>";
