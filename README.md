@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # XYZ E-commerce - Plateforme de Commerce Électronique
 
 ## Description du Projet
@@ -7,18 +6,18 @@ Ce projet consiste en le développement d'une plateforme de e-commerce complète
 
 ## Architecture du Projet
 
-Le site contient exactement 10 pages distinctes avec des rôles fonctionnels différents :
+Le site est structuré autour de 10 pages PHP distinctes pour répondre aux exigences du projet, chacune ayant un rôle fonctionnel spécifique :
 
-1. **index.php** : Page d'accueil de la plateforme.
-2. **catalogue.php** : Affichage cohérent des produits.
-3. **produit.php** : Page de détail d'un produit spécifique.
-4. **categorie_a.php** : Première catégorie de produits.
-5. **categorie_b.php** : Deuxième catégorie de produits.
-6. **panier.php** : Logique fonctionnelle menant à la commande.
-7. **contact.php** : Formulaire riche avec validation JavaScript.
-8. **traitement.php** : Page PHP gérant les calculs et validations.
-9. **presentation.php** : Page "À propos" avec contenus personnalisés.
-10. **mentions.php** : Informations légales obligatoires.
+1.  **index.php** : Page d'accueil.
+2.  **boutique.php** : Page principale de la boutique affichant tous les produits.
+3.  **produit.php** : Modèle de page pour l'affichage détaillé d'un produit spécifique.
+4.  **categorie_a.php** : Modèle de page pour une catégorie de produits (ex: Énergie).
+5.  **categorie_b.php** : Modèle de page pour une autre catégorie (ex: Force).
+6.  **panier.php** : Page du panier d'achat, gérée côté client avec JavaScript.
+7.  **contact.php** : Formulaire de contact avec validation côté client.
+8.  **traitement.php** : Page de traitement et de validation côté serveur pour le formulaire de contact.
+9.  **presentation.php** : Page "À propos" de l'entreprise.
+10. **mentions.php** : Page des mentions légales.
 
 ## Structure des Fichiers
 
@@ -113,6 +112,3 @@ Développé pour l'entreprise XYZ - 2026
 ## Licence
 
 Tous droits réservés - Entreprise XYZ
-=======
-# projet-momo-nt
->>>>>>> 895b6af76a00d50633fd79a265300151b2b8d270
