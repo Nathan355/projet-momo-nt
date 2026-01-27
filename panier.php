@@ -39,10 +39,7 @@
 
             <div class="cart-wrapper" id="cart-full-state">
                 <div class="cart-items" id="cart-items-container">
-                    <!-- Les articles du panier seront insérés ici par JavaScript -->
                 </div>
-
-                <!-- Résumé de commande -->
                 <div class="cart-summary-box">
                     <h2>Résumé de la commande</h2>
                     <div class="summary-row">
@@ -66,7 +63,6 @@
                 </div>
             </div>
 
-            <!-- Continuer les achats -->
             <div class="continue-shopping" id="continue-shopping-link-bottom">
                 <a href="boutique.php"><i class="fas fa-arrow-left"></i> Continuer mes achats</a>
             </div>
@@ -92,7 +88,7 @@
                 <ul>
                     <li><a href="contact.php">Nous Contacter</a></li>
                     <li><i class="fas fa-phone"></i> 01 23 45 67 89</li>
-                    <li><i class="fas fa-envelope"></i> info@pumppower.fr</li>
+                    <li><i class="fas fa-envelope"></i> XYZ.Proteine@outlook.fr</li>
                 </ul>
             </div>
         </div>

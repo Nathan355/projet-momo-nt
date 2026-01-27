@@ -125,64 +125,85 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // --- Logique spécifique à la page panier (panier.php) ---
-    const cartItemsContainer = document.getElementById('cart-items-container');
-    const emptyCartMessage = document.getElementById('empty-cart-message');
-    const cartTotalAmount = document.getElementById('cart-total-amount');
-    const cartSummary = document.querySelector('.cart-summary');
-
-    if (cartItemsContainer) { // S'exécute seulement sur panier.php
+    if (document.getElementById('cart-page')) { // S'exécute seulement sur panier.php
         function renderCart() {
-            cartItemsContainer.innerHTML = '';
-            let totalCartPrice = 0;
+            const cartEmptyState = document.getElementById('cart-empty-state');
+            const cartFullState = document.getElementById('cart-full-state');
+            const continueShoppingLink = document.getElementById('continue-shopping-link-bottom');
+            const itemsContainer = document.getElementById('cart-items-container');
+            const subtotalEl = document.getElementById('summary-subtotal');
+            const shippingEl = document.getElementById('summary-shipping');
+            const totalEl = document.getElementById('summary-total');
 
             if (cartItems.length === 0) {
-                if(emptyCartMessage) emptyCartMessage.style.display = 'block';
-                if(cartSummary) cartSummary.style.display = 'none';
-            } else {
-                if(emptyCartMessage) emptyCartMessage.style.display = 'none';
-                if(cartSummary) cartSummary.style.display = 'flex';
-
-                cartItems.forEach(item => {
-                    const itemElement = document.createElement('div');
-                    itemElement.classList.add('cart-item');
-                    itemElement.innerHTML = `
-                        <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                        <div class="cart-item-details">
-                            <h3>${item.name}</h3>
-                            <p>${item.price.toFixed(2)}€</p>
-                        </div>
-                        <div class="cart-item-actions">
-                            <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
-                            <span class="item-quantity">${item.quantity}</span>
-                            <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
-                        </div>
-                        <button class="remove-item-btn" data-id="${item.id}"><i class="fas fa-trash"></i></button>
-                    `;
-                    cartItemsContainer.appendChild(itemElement);
-                    totalCartPrice += item.price * item.quantity;
-                });
+                if (cartEmptyState) cartEmptyState.style.display = 'block';
+                if (cartFullState) cartFullState.style.display = 'none';
+                if (continueShoppingLink) continueShoppingLink.style.display = 'none';
+                updateCartBadge();
+                return;
             }
 
-            if(cartTotalAmount) cartTotalAmount.textContent = totalCartPrice.toFixed(2) + '€';
+            if (cartEmptyState) cartEmptyState.style.display = 'none';
+            if (cartFullState) cartFullState.style.display = 'grid';
+            if (continueShoppingLink) continueShoppingLink.style.display = 'block';
+
+            itemsContainer.innerHTML = '';
+            let subtotal = 0;
+
+            cartItems.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+
+                const itemElement = document.createElement('div');
+                itemElement.classList.add('cart-item');
+                itemElement.innerHTML = `
+                    <div class="cart-item-image"><img src="${item.image}" alt="${item.name}"></div>
+                    <div class="cart-item-details">
+                        <h3>${item.name}</h3>
+                        <span class="cart-item-price">${item.price.toFixed(2)}€</span>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="qty-btn minus" data-id="${item.id}"><i class="fas fa-minus"></i></button>
+                        <input type="number" value="${item.quantity}" min="1" class="qty-input" readonly>
+                        <button class="qty-btn plus" data-id="${item.id}"><i class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="cart-item-total">${itemTotal.toFixed(2)}€</div>
+                    <button class="cart-item-remove" data-id="${item.id}"><i class="fas fa-trash"></i></button>
+                `;
+                itemsContainer.appendChild(itemElement);
+            });
+
+            const shippingCost = subtotal >= 50 ? 0 : 5.99;
+            const total = subtotal + shippingCost;
+
+            if (subtotalEl) subtotalEl.textContent = subtotal.toFixed(2) + '€';
+            if (shippingEl) {
+                shippingEl.textContent = shippingCost === 0 ? 'GRATUITE' : shippingCost.toFixed(2) + '€';
+                shippingEl.classList.toggle('free-shipping', shippingCost === 0);
+            }
+            if (totalEl) totalEl.textContent = total.toFixed(2) + '€';
+            
             updateCartBadge();
         }
 
-        cartItemsContainer.addEventListener('click', (event) => {
-            const button = event.target.closest('.quantity-btn, .remove-item-btn');
-            if (!button) return;
+        document.getElementById('cart-items-container').addEventListener('click', (event) => {
+            const target = event.target.closest('.qty-btn, .cart-item-remove');
+            if (!target) return;
 
-            const itemId = button.dataset.id;
+            const itemId = target.dataset.id;
             const item = cartItems.find(i => i.id === itemId);
+            if (!item) return;
 
-            if (button.classList.contains('increase-quantity')) {
-                if(item) item.quantity++;
-            } else if (button.classList.contains('decrease-quantity')) {
+            if (target.classList.contains('plus')) {
+                item.quantity++;
+            } else if (target.classList.contains('minus')) {
+                item.quantity--;
                 if (item && item.quantity > 1) {
                     item.quantity--;
                 } else {
                     cartItems = cartItems.filter(i => i.id !== itemId);
                 }
-            } else if (button.classList.contains('remove-item-btn')) {
+            } else if (target.classList.contains('cart-item-remove')) {
                 cartItems = cartItems.filter(i => i.id !== itemId);
             }
 
