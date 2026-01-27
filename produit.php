@@ -70,7 +70,7 @@
                 <ul>
                     <li><a href="contact.php">Nous Contacter</a></li>
                     <li><i class="fas fa-phone"></i> 01 23 45 67 89</li>
-                    <li><i class="fas fa-envelope"></i> info@pumppower.fr</li>
+                    <li><i class="fas fa-envelope"></i> XYZ.Proteine@outlook.fr</li>
                 </ul>
             </div>
         </div>
