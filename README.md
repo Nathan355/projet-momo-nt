@@ -1,103 +1,162 @@
-# XYZ E-commerce - Plateforme de Commerce Électronique
+# 🏋️ XYZ - Boutique de Suppléments Pré-Workout
 
-## Description du Projet
+## 📋 Description du Projet
 
-Ce projet consiste en le développement d'une plateforme de e-commerce complète pour l'entreprise XYZ. Il respecte les normes techniques strictes imposées, incluant une architecture avec au minimum 10 pages distinctes, une base de données relationnelle, et des interactions dynamiques.
+Plateforme e-commerce complète pour la vente de suppléments pré-workout et produits de fitness. Le site propose une expérience utilisateur moderne avec un design responsive, un système de panier dynamique côté client, et un formulaire de contact avec double validation (JavaScript + PHP).
 
-## Architecture du Projet
+## ✨ Fonctionnalités Implémentées
 
-Le site est structuré autour de 10 pages PHP distinctes pour répondre aux exigences du projet, chacune ayant un rôle fonctionnel spécifique :
+### 🛒 Système de Panier Avancé
+- **Gestion via LocalStorage** : Panier persistant entre les sessions
+- **Ajout/Suppression de produits** : Interface intuitive avec boutons +/-
+- **Calcul automatique** : Sous-total, frais de livraison (gratuit > 50€), total
+- **Badge dynamique** : Affichage du nombre d'articles dans la navbar
+- **Notifications Toast** : Confirmation visuelle lors de l'ajout au panier
+- **États vide/plein** : Affichage conditionnel selon le contenu du panier
 
-1.  **index.php** : Page d'accueil.
-2.  **boutique.php** : Page principale de la boutique affichant tous les produits.
-3.  **produit.php** : Modèle de page pour l'affichage détaillé d'un produit spécifique.
-4.  **categorie_a.php** : Modèle de page pour une catégorie de produits (ex: Énergie).
-5.  **categorie_b.php** : Modèle de page pour une autre catégorie (ex: Force).
-6.  **panier.php** : Page du panier d'achat, gérée côté client avec JavaScript.
-7.  **contact.php** : Formulaire de contact avec validation côté client.
-8.  **traitement.php** : Page de traitement et de validation côté serveur pour le formulaire de contact.
-9.  **presentation.php** : Page "À propos" de l'entreprise.
-10. **mentions.php** : Page des mentions légales.
+### 🎨 Design & Interface
+- **Thème sportif moderne** : Couleurs rouge (#FF1744), noir et accents jaunes
+- **Navigation sticky** : Barre de navigation fixe avec logo et icônes
+- **Hero section** : Image de fond avec effet blur et overlay
+- **Animations au scroll** : Apparition progressive des éléments
+- **Cards produits** : Badges (Best Seller, Promo, Nouvelle Saveur), ratings, prix barrés
+- **Footer complet** : Liens rapides, contact, réseaux sociaux
 
-## Structure des Fichiers
+### 📱 Responsive Design
+- **Menu hamburger** : Navigation mobile avec animation du bouton
+- **Grilles adaptatives** : Produits sur 1-4 colonnes selon l'écran
+- **Typographie fluide** : Tailles de texte adaptées
 
+### 📝 Formulaire de Contact
+- **Validation JavaScript** : Vérification en temps réel avant envoi
+- **Validation PHP** : Double vérification côté serveur (traitement.php)
+- **Champs** : Nom, Prénom, Email, Sujet (select), Message
+- **Feedback utilisateur** : Récapitulatif après envoi réussi
+
+### 🛍️ Catalogue Produits
+6 produits disponibles :
+| Produit | Prix | Badge |
+|---------|------|-------|
+| XYZ EXTREME | 49.99€ | Best Seller |
+| XYZ ENERGY | 29.99€ | Nouvelle Saveur |
+| XYZ CREATINE | 19.99€ (~~24.99€~~) | Promo -20% |
+| XYZ PUMP | 39.99€ | Sans Stimulant |
+| XYZ FOCUS | 44.99€ | Nouveau |
+| XYZ VEGAN | 34.99€ | 100% Végétal |
+
+## 🏗️ Architecture du Projet
+
+### Pages (10 fichiers PHP)
+| Page | Description |
+|------|-------------|
+| `index.php` | Accueil avec hero, avantages et produits vedettes |
+| `boutique.php` | Catalogue complet des produits |
+| `produit.php` | Détail d'un produit spécifique |
+| `categorie_a.php` | Catégorie Énergie |
+| `categorie_b.php` | Catégorie Force |
+| `panier.php` | Panier d'achat avec résumé de commande |
+| `contact.php` | Formulaire de contact moderne |
+| `traitement.php` | Traitement PHP du formulaire |
+| `presentation.php` | Page "À propos" de l'entreprise |
+| `mentions.php` | Mentions légales |
+
+### Structure des Fichiers
 ```
-nwe project avec momo/
+projet-momo-nt-main/
 ├── index.php                 # Page d'accueil
-├── catalogue.php             # Catalogue des produits
+├── boutique.php              # Catalogue produits
 ├── produit.php               # Détail produit
-├── categorie_a.php           # Catégorie A
-├── categorie_b.php           # Catégorie B
+├── categorie_a.php           # Catégorie Énergie
+├── categorie_b.php           # Catégorie Force
 ├── panier.php                # Panier d'achat
 ├── contact.php               # Formulaire de contact
 ├── traitement.php            # Traitement PHP
 ├── presentation.php          # À propos
 ├── mentions.php              # Mentions légales
 ├── css/
-│   └── style.css             # Feuilles de styles externes
+│   └── style.css             # Styles (1345 lignes)
 ├── js/
-│   └── script.js             # Interactions JavaScript
-├── assets/                   # Images des produits
+│   └── script.js             # JavaScript (244 lignes)
+├── images/
+│   ├── TETE.png              # Image hero background
+│   ├── extreme.png           # Image produit
+│   ├── energy.png            # Image produit
+│   ├── creatine.png          # Image produit
+│   ├── pump.png              # Image produit
+│   ├── focus.png             # Image produit
+│   └── vegan.png             # Image produit
 ├── database_design.txt       # MCD et MLD
-├── export.sql                # Script SQL de la base
-└── README.md                 # Ce fichier
+├── export.sql                # Script SQL
+├── MCD Projet.loo            # Fichier Looping MCD
+└── README.md                 # Documentation
 ```
 
-## Conception de la Base de Données
+## 🗄️ Base de Données
 
-### Modèle Conceptuel de Données (MCD)
-- **Entités** : Produit, Categorie, Client, Commande, LigneCommande
-- **Associations** : Relations entre les entités pour maintenir l'intégrité
+### Modèle Conceptuel (MCD)
+- **Produit** : id, nom, description, prix, image_url, categorie_id
+- **Categorie** : id, nom
+- **Client** : id, nom, prenom, email, telephone, adresse
+- **Commande** : id, client_id, date_commande, total
+- **LigneCommande** : id, commande_id, produit_id, quantite, prix_unitaire
 
-### Modèle Logique de Données (MLD)
-- Tables SQL avec clés primaires et étrangères
-- Contraintes d'intégrité référentielle
+### Relations
+- Un Produit appartient à une Catégorie (N:1)
+- Un Client passe plusieurs Commandes (1:N)
+- Une Commande contient plusieurs LigneCommande (1:N)
+- Une LigneCommande référence un Produit (N:1)
 
-### Export SQL
-- Fichier `export.sql` contenant la structure complète de la base
-- Inclut des données d'exemple pour les tests
+## 🛠️ Technologies Utilisées
 
-## Technologies Utilisées
+| Technologie | Utilisation |
+|-------------|-------------|
+| **HTML5** | Structure sémantique |
+| **CSS3** | Variables CSS, Flexbox, Grid, animations |
+| **JavaScript** | Panier localStorage, validation, DOM |
+| **PHP** | Traitement formulaire, sécurisation |
+| **MySQL** | Base de données relationnelle |
+| **Font Awesome** | Icônes (v6.0.0) |
+| **Git** | Versionnement |
 
-- **HTML5** : Structure sémantique des pages
-- **CSS3** : Mise en page responsive et styles externes
-- **JavaScript** : Interactions dynamiques et validation de formulaires
-- **PHP** : Traitement côté serveur et logique métier
-- **MySQL** : Base de données relationnelle
-- **Git** : Gestion de version
+## 🚀 Installation
 
-## Fonctionnalités Clés
+1. **Prérequis** : XAMPP, WAMP ou serveur PHP local
 
-### Interactivité JavaScript
-- Validation avancée du formulaire de contact
-- Menu responsive pour mobile
-- Interactions dynamiques utilisateur
-
-### Traitement PHP
-- Variables dynamiques pour les calculs
-- Conditions pour la logique métier (ex: remises)
-- Validation et traitement des données
-
-### Base de Données
-- Gestion des produits et catégories
-- Système de clients et commandes
-- Lignes de commande détaillées
-
-## Installation et Configuration
-
-1. **Cloner le dépôt** :
+2. **Cloner le projet** :
    ```bash
    git clone https://github.com/Nathan355/projet-momo-nt.git
-   cd "nwe project avec momo"
    ```
 
-2. **Configurer la base de données** :
-   - Importer `export.sql` dans MySQL
-   - Configurer les connexions PHP (à implémenter)
+3. **Placer dans le dossier web** :
+   ```bash
+   # Copier dans htdocs (XAMPP) ou www (WAMP)
+   ```
 
-3. **Lancer le serveur** :
-   - Utiliser XAMPP, WAMP ou un serveur PHP local
-   - Accéder à `index.php` via localhost
+4. **Importer la base de données** :
+   - Ouvrir phpMyAdmin
+   - Importer `export.sql`
+
+5. **Accéder au site** :
+   ```
+   http://localhost/projet-momo-nt-main/
+   ```
+
+## 📱 Captures d'écran
+
+Le site comprend :
+- Page d'accueil avec hero section et produits vedettes
+- Boutique avec grille de produits et filtres visuels
+- Panier dynamique avec calcul automatique
+- Formulaire de contact moderne en deux colonnes
+- Design cohérent sur toutes les pages
+
+## 👥 Auteurs
+
+- **Nathan** & **Momo** - Développement complet
+
+## 📄 Licence
+
+© 2026 XYZ - Tous droits réservés
 
 ## Développement et Contributions
 
