@@ -5,57 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XYZ E-commerce - Contact</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="index.php">Accueil</a></li>
-                <li><a href="catalogue.php">Boutique</a></li>
-                <li><a href="contact.php">Contact</a></li>
-            </ul>
-        </nav>
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-bolt"></i> XYZ
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.php">Accueil</a></li>
+                    <li><a href="boutique.php">Boutique</a></li>
+                    <li><a href="presentation.php">À Propos</a></li>
+                    <li><a href="contact.php" class="active">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <a href="panier.php" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge">0</span></a>
+            </div>
+            <button class="nav-toggle" aria-label="Ouvrir le menu"><span class="hamburger"></span></button>
+        </div>
     </header>
 
     <main>
-        <h1>Contactez-nous</h1>
-        <form id="contactForm" action="traitement.php" method="post">
-            <label for="nom">Nom :</label>
-            <input type="text" id="nom" name="nom" required>
-
-            <label for="prenom">Prénom :</label>
-            <input type="text" id="prenom" name="prenom" required>
-
-            <label for="email">Email :</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="telephone">Téléphone :</label>
-            <input type="tel" id="telephone" name="telephone">
-
-            <label for="sujet">Sujet :</label>
-            <select id="sujet" name="sujet" required>
-                <option value="">Choisissez un sujet</option>
-                <option value="commande">Commande</option>
-                <option value="retour">Retour produit</option>
-                <option value="support">Support technique</option>
-                <option value="autre">Autre</option>
-            </select>
-
-            <label for="message">Message :</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-
-            <label>
-                <input type="checkbox" id="newsletter" name="newsletter">
-                S'abonner à la newsletter
-            </label>
-
-            <button type="submit">Envoyer</button>
-        </form>
+        <section class="contact-page-wrapper">
+            <div class="contact-grid">
+                <div class="contact-info-block">
+                    <h1 class="contact-title">Entrons en contact</h1>
+                    <p class="contact-subtitle">Nous sommes là pour répondre à toutes vos questions. Remplissez le formulaire ou utilisez nos coordonnées directes.</p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <h4>Notre Siège</h4>
+                                <p>123 Rue du Muscle, 75001 Paris, France</p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <h4>Email</h4>
+                                <p><a href="mailto:info@pumppower.fr">info@pumppower.fr</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-detail-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <h4>Téléphone</h4>
+                                <p><a href="tel:0123456789">01 23 45 67 89</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-block">
+                    <form id="contactForm" class="contact-form" action="traitement.php" method="post">
+                        <h2>Envoyez-nous un message</h2>
+                        <div class="form-row">
+                            <div class="form-group"><label for="nom">Nom</label><input type="text" id="nom" name="nom" required placeholder="Votre nom"></div>
+                            <div class="form-group"><label for="prenom">Prénom</label><input type="text" id="prenom" name="prenom" required placeholder="Votre prénom"></div>
+                        </div>
+                        <div class="form-group"><label for="email">Email</label><input type="email" id="email" name="email" required placeholder="Votre email"></div>
+                        <div class="form-group"><label for="sujet">Sujet</label><select id="sujet" name="sujet" required><option value="">Choisissez un sujet</option><option value="commande">Question sur une commande</option><option value="retour">Demande de retour</option><option value="support">Support produit</option><option value="autre">Autre</option></select></div>
+                        <div class="form-group"><label for="message">Message</label><textarea id="message" name="message" rows="6" required placeholder="Votre message..."></textarea></div>
+                        <button type="submit" class="cta-button">Envoyer le message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer>
-        <p>&copy; 2026 Entreprise XYZ - Tous droits réservés</p>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>XYZ</h4>
+                <p>Les meilleurs suppléments pré-workout pour vos performances</p>
+            </div>
+            <div class="footer-section">
+                <h4>LIENS RAPIDES</h4>
+                <ul>
+                    <li><a href="boutique.php">Boutique</a></li>
+                    <li><a href="presentation.php">À Propos</a></li>
+                    <li><a href="mentions.php">Mentions légales</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>CONTACT</h4>
+                <ul>
+                    <li><a href="contact.php">Nous Contacter</a></li>
+                    <li><i class="fas fa-phone"></i> 01 23 45 67 89</li>
+                    <li><i class="fas fa-envelope"></i> info@pumppower.fr</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 XYZ - Tous droits réservés | Livraison gratuite à partir de 50€</p>
+        </div>
     </footer>
+
+    <div id="toast-notification" class="toast-notification"></div>
 
     <script src="js/script.js"></script>
 </body>
