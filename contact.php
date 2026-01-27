@@ -47,7 +47,7 @@
                             <i class="fas fa-envelope"></i>
                             <div>
                                 <h4>Email</h4>
-                                <p><a href="mailto:info@pumppower.fr">info@pumppower.fr</a></p>
+                                <p><a href="mailto:info@pumppower.fr">XYZ.Proteine@outlook.fr</a></p>
                             </div>
                         </div>
                         <div class="contact-detail-item">
