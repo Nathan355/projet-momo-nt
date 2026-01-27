@@ -1,0 +1,79 @@
+# Modèle Conceptuel de Données (MCD) pour XYZ E-commerce
+
+## Entités
+
+### Produit
+- id_produit (clé primaire)
+- nom
+- description
+- prix
+- image_url
+- categorie_id (clé étrangère vers Categorie)
+
+### Categorie
+- id_categorie (clé primaire)
+- nom
+
+### Client
+- id_client (clé primaire)
+- nom
+- prenom
+- email
+- telephone
+- adresse
+
+### Commande
+- id_commande (clé primaire)
+- client_id (clé étrangère vers Client)
+- date_commande
+- total
+
+### LigneCommande
+- id_ligne (clé primaire)
+- commande_id (clé étrangère vers Commande)
+- produit_id (clé étrangère vers Produit)
+- quantite
+- prix_unitaire
+
+## Associations
+- Un Produit appartient à une Categorie (1,N)
+- Un Client passe plusieurs Commandes (1,N)
+- Une Commande contient plusieurs LignesCommande (1,N)
+- Une LigneCommande concerne un Produit (N,1)
+
+# Modèle Logique de Données (MLD)
+
+## Tables
+
+### categorie
+- id_categorie (INT, PRIMARY KEY, AUTO_INCREMENT)
+- nom (VARCHAR(255), NOT NULL)
+
+### produit
+- id_produit (INT, PRIMARY KEY, AUTO_INCREMENT)
+- nom (VARCHAR(255), NOT NULL)
+- description (TEXT)
+- prix (DECIMAL(10,2), NOT NULL)
+- image_url (VARCHAR(255))
+- categorie_id (INT, FOREIGN KEY REFERENCES categorie(id_categorie))
+
+### client
+- id_client (INT, PRIMARY KEY, AUTO_INCREMENT)
+- nom (VARCHAR(255), NOT NULL)
+- prenom (VARCHAR(255), NOT NULL)
+- email (VARCHAR(255), NOT NULL, UNIQUE)
+- telephone (VARCHAR(20))
+- adresse (TEXT)
+
+### commande
+- id_commande (INT, PRIMARY KEY, AUTO_INCREMENT)
+- client_id (INT, FOREIGN KEY REFERENCES client(id_client))
+- date_commande (DATETIME, DEFAULT CURRENT_TIMESTAMP)
+- total (DECIMAL(10,2), NOT NULL)
+
+### ligne_commande
+- id_ligne (INT, PRIMARY KEY, AUTO_INCREMENT)
+- commande_id (INT, FOREIGN KEY REFERENCES commande(id_commande))
+- produit_id (INT, FOREIGN KEY REFERENCES produit(id_produit))
+- quantite (INT, NOT NULL)
+- prix_unitaire (DECIMAL(10,2), NOT NULL)
