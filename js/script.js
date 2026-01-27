@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         renderCart(); // Affichage initial du panier
     }
-
     // Mise à jour initiale du badge au chargement de la page
     updateCartBadge();
 

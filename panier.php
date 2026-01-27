@@ -29,17 +29,46 @@
     </header>
 
     <main>
-        <section class="cart-section">
+        <section class="cart-section" id="cart-page">
             <h1>Votre Panier</h1>
-            <div class="cart-container" id="cart-items-container">
-                <p id="empty-cart-message">Votre panier est vide pour le moment.</p>
+            
+            <div id="cart-empty-state" style="display: none; text-align: center; padding: 4rem 0;">
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Votre panier est vide pour le moment.</p>
+                <a href="boutique.php" class="cta-button">Découvrir nos produits</a>
             </div>
-            <div class="cart-summary">
-                <div class="cart-total">
-                    <span>Total du panier :</span>
-                    <span id="cart-total-amount">0.00€</span>
+
+            <div class="cart-wrapper" id="cart-full-state">
+                <div class="cart-items" id="cart-items-container">
+                    <!-- Les articles du panier seront insérés ici par JavaScript -->
                 </div>
-                <button class="cta-button">Passer à la commande</button>
+
+                <!-- Résumé de commande -->
+                <div class="cart-summary-box">
+                    <h2>Résumé de la commande</h2>
+                    <div class="summary-row">
+                        <span>Sous-total</span>
+                        <span id="summary-subtotal">0.00€</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Livraison</span>
+                        <span id="summary-shipping">Calcul...</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span id="summary-total">0.00€</span>
+                    </div>
+                    <button class="checkout-btn"><i class="fas fa-lock"></i> Passer la commande</button>
+                    <p class="secure-text"><i class="fas fa-shield-alt"></i> Paiement 100% sécurisé</p>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-paypal"></i> <i class="fab fa-cc-apple-pay"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Continuer les achats -->
+            <div class="continue-shopping" id="continue-shopping-link-bottom">
+                <a href="boutique.php"><i class="fas fa-arrow-left"></i> Continuer mes achats</a>
             </div>
         </section>
     </main>
