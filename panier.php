@@ -27,48 +27,23 @@
             <button class="nav-toggle" aria-label="Ouvrir le menu"><span class="hamburger"></span></button>
         </div>
     </header>
-
+ 
     <main>
-        <section class="cart-section" id="cart-page">
+        <section class="cart-section">
             <h1>Votre Panier</h1>
-            
-            <div id="cart-empty-state" style="display: none; text-align: center; padding: 4rem 0;">
-                <p style="font-size: 1.2rem; color: #666; margin-bottom: 2rem;">Votre panier est vide pour le moment.</p>
-                <a href="boutique.php" class="cta-button">Découvrir nos produits</a>
+            <div class="cart-container" id="cart-items-container">
+                <p id="empty-cart-message">Votre panier est vide pour le moment.</p>
             </div>
-
-            <div class="cart-wrapper" id="cart-full-state">
-                <div class="cart-items" id="cart-items-container">
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span>Total du panier :</span>
+                    <span id="cart-total-amount">0.00€</span>
                 </div>
-                <div class="cart-summary-box">
-                    <h2>Résumé de la commande</h2>
-                    <div class="summary-row">
-                        <span>Sous-total</span>
-                        <span id="summary-subtotal">0.00€</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Livraison</span>
-                        <span id="summary-shipping">Calcul...</span>
-                    </div>
-                    <div class="summary-divider"></div>
-                    <div class="summary-row total">
-                        <span>Total</span>
-                        <span id="summary-total">0.00€</span>
-                    </div>
-                    <button class="checkout-btn"><i class="fas fa-lock"></i> Passer la commande</button>
-                    <p class="secure-text"><i class="fas fa-shield-alt"></i> Paiement 100% sécurisé</p>
-                    <div class="payment-methods">
-                        <i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> <i class="fab fa-cc-paypal"></i> <i class="fab fa-cc-apple-pay"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="continue-shopping" id="continue-shopping-link-bottom">
-                <a href="boutique.php"><i class="fas fa-arrow-left"></i> Continuer mes achats</a>
+                <button class="cta-button">Passer à la commande</button>
             </div>
         </section>
     </main>
-
+ 
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
@@ -96,9 +71,9 @@
             <p>&copy; 2026 XYZ - Tous droits réservés | Livraison gratuite à partir de 50€</p>
         </div>
     </footer>
-
+ 
     <div id="toast-notification" class="toast-notification"></div>
-
+ 
     <script src="js/script.js"></script>
 </body>
 </html>
