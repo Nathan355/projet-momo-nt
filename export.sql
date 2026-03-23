@@ -49,6 +49,15 @@ CREATE TABLE ligne_commande (
     FOREIGN KEY (produit_id) REFERENCES produit(id_produit)
 );
 
+-- Table utilisateur (authentification)
+CREATE TABLE utilisateur (
+    id_utilisateur INT PRIMARY KEY AUTO_INCREMENT,
+    pseudo VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    mot_de_passe VARCHAR(255) NOT NULL,
+    date_inscription DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Insertion de données exemple
 INSERT INTO categorie (nom) VALUES ('Électronique'), ('Vêtements');
 
