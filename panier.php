@@ -63,7 +63,7 @@
                     <span>Total du panier :</span>
                     <span id="cart-total-amount">0.00€</span>
                 </div>
-                <button class="cta-button">Passer à la commande</button>
+                <a href="checkout.php" class="cta-button" style="text-decoration:none; text-align:center; display:inline-block;"><i class="fas fa-credit-card"></i> Passer a la commande</a>
             </div>
         </section>
     </main>
