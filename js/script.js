@@ -216,6 +216,85 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mise à jour initiale du badge au chargement de la page
     updateCartBadge();
 
+    // --- Bandeau Cookies ---
+    function initCookieBanner() {
+        if (localStorage.getItem('cookiesAccepted')) return;
+
+        const banner = document.createElement('div');
+        banner.id = 'cookie-banner';
+        banner.className = 'cookie-banner';
+        banner.innerHTML = `
+            <div class="cookie-content">
+                <div class="cookie-text">
+                    <i class="fas fa-cookie-bite cookie-icon"></i>
+                    <div>
+                        <strong>Ce site utilise des cookies</strong>
+                        <p>Nous utilisons des cookies pour ameliorer votre experience, analyser le trafic et personnaliser le contenu. En continuant, vous acceptez notre utilisation des cookies.</p>
+                    </div>
+                </div>
+                <div class="cookie-actions">
+                    <button class="cookie-btn cookie-btn-settings" id="cookie-settings-btn"><i class="fas fa-cog"></i> Personnaliser</button>
+                    <button class="cookie-btn cookie-btn-reject" id="cookie-reject-btn">Refuser</button>
+                    <button class="cookie-btn cookie-btn-accept" id="cookie-accept-btn"><i class="fas fa-check"></i> Tout accepter</button>
+                </div>
+            </div>
+            <div class="cookie-settings-panel" id="cookie-settings-panel" style="display:none;">
+                <h4>Preferences des cookies</h4>
+                <div class="cookie-option">
+                    <label><input type="checkbox" checked disabled> <strong>Essentiels</strong> - Necessaires au fonctionnement du site</label>
+                </div>
+                <div class="cookie-option">
+                    <label><input type="checkbox" id="cookie-analytics" checked> <strong>Analytiques</strong> - Nous aident a comprendre comment vous utilisez le site</label>
+                </div>
+                <div class="cookie-option">
+                    <label><input type="checkbox" id="cookie-marketing" checked> <strong>Marketing</strong> - Permettent de vous proposer des offres personnalisees</label>
+                </div>
+                <div class="cookie-option">
+                    <label><input type="checkbox" id="cookie-preferences" checked> <strong>Preferences</strong> - Memorisent vos choix et personnalisations</label>
+                </div>
+                <button class="cookie-btn cookie-btn-accept" id="cookie-save-btn"><i class="fas fa-save"></i> Sauvegarder mes choix</button>
+            </div>
+        `;
+        document.body.appendChild(banner);
+
+        // Afficher avec animation
+        setTimeout(() => banner.classList.add('show'), 500);
+
+        document.getElementById('cookie-accept-btn').addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', JSON.stringify({
+                essential: true, analytics: true, marketing: true, preferences: true
+            }));
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        });
+
+        document.getElementById('cookie-reject-btn').addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', JSON.stringify({
+                essential: true, analytics: false, marketing: false, preferences: false
+            }));
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        });
+
+        document.getElementById('cookie-settings-btn').addEventListener('click', () => {
+            const panel = document.getElementById('cookie-settings-panel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        });
+
+        document.getElementById('cookie-save-btn').addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', JSON.stringify({
+                essential: true,
+                analytics: document.getElementById('cookie-analytics').checked,
+                marketing: document.getElementById('cookie-marketing').checked,
+                preferences: document.getElementById('cookie-preferences').checked
+            }));
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 500);
+        });
+    }
+
+    initCookieBanner();
+
     // Animation au défilement
     const animatedElements = document.querySelectorAll('.scroll-animate');
 
