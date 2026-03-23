@@ -70,6 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ul>
             </nav>
             <div class="nav-icons">
+                <?php if (isset($_SESSION['user_pseudo'])): ?>
+                    <div class="user-menu">
+                        <span class="user-badge"><i class="fas fa-user-circle"></i> <?= htmlspecialchars($_SESSION['user_pseudo']) ?></span>
+                        <a href="logout.php" class="logout-link" title="Deconnexion"><i class="fas fa-sign-out-alt"></i></a>
+                    </div>
+                <?php else: ?>
+                    <a href="login.php" class="login-link" title="Se connecter"><i class="fas fa-user"></i> Connexion</a>
+                <?php endif; ?>
                 <a href="admin.php" class="admin-icon" title="Admin"><i class="fas fa-cog"></i></a>
                 <a href="panier.php" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge">0</span></a>
             </div>
