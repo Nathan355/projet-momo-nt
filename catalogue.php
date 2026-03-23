@@ -19,9 +19,11 @@
                     <li><a href="catalogue.php" class="active">Boutique</a></li>
                     <li><a href="presentation.php">À Propos</a></li>
                     <li><a href="contact.php">Contact</a></li>
+                    <li><a href="jeux.php">Jeux</a></li>
                 </ul>
             </nav>
             <div class="nav-icons">
+                <a href="admin.php" class="admin-icon" title="Admin"><i class="fas fa-cog"></i></a>
                 <a href="panier.php" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge">0</span></a>
             </div>
             <button class="nav-toggle" aria-label="Ouvrir le menu"><span class="hamburger"></span></button>
