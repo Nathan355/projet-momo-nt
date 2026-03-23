@@ -83,6 +83,131 @@
         </div>
     </section>
 
+    <!-- Section Recompenses Mensuelles -->
+    <section class="rewards-section">
+        <div class="rewards-container">
+            <div class="rewards-header">
+                <h2><i class="fas fa-trophy"></i> RECOMPENSES DU MOIS</h2>
+                <p>Les meilleurs joueurs de chaque mois remportent des lots incroyables !</p>
+            </div>
+            <div class="rewards-grid">
+                <div class="reward-card gold">
+                    <div class="reward-rank">1er</div>
+                    <div class="reward-icon"><i class="fas fa-gamepad"></i></div>
+                    <h3>PlayStation 5</h3>
+                    <p>Le meilleur joueur du mois gagne une PS5 !</p>
+                    <span class="reward-value">Valeur : 549</span>
+                </div>
+                <div class="reward-card silver">
+                    <div class="reward-rank">2eme</div>
+                    <div class="reward-icon"><i class="fas fa-headphones-alt"></i></div>
+                    <h3>Casque Gaming</h3>
+                    <p>Un casque gaming sans fil premium !</p>
+                    <span class="reward-value">Valeur : 149</span>
+                </div>
+                <div class="reward-card bronze">
+                    <div class="reward-rank">3eme</div>
+                    <div class="reward-icon"><i class="fas fa-box-open"></i></div>
+                    <h3>Pack XYZ Complet</h3>
+                    <p>Les 6 produits XYZ + un shaker offert !</p>
+                    <span class="reward-value">Valeur : 250</span>
+                </div>
+            </div>
+            <div class="rewards-rules">
+                <h3><i class="fas fa-info-circle"></i> Comment participer ?</h3>
+                <div class="rules-list">
+                    <div class="rule-item"><span class="rule-number">1</span> Jouez a n'importe quel mini-jeu (Quiz, Snake, Memory, Speed Typing)</div>
+                    <div class="rule-item"><span class="rule-number">2</span> Vos meilleurs scores sont enregistres automatiquement</div>
+                    <div class="rule-item"><span class="rule-number">3</span> A la fin du mois, les 3 meilleurs joueurs sont recompenses</div>
+                    <div class="rule-item"><span class="rule-number">4</span> Les gagnants sont contactes par email</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="leaderboard-section">
+        <div class="leaderboard-container">
+            <h2><i class="fas fa-medal"></i> CLASSEMENT DU MOIS - MARS 2026</h2>
+            <div class="leaderboard-tabs">
+                <button class="lb-tab active" data-game="global"><i class="fas fa-globe"></i> Global</button>
+                <button class="lb-tab" data-game="quiz"><i class="fas fa-question-circle"></i> Quiz</button>
+                <button class="lb-tab" data-game="snake"><i class="fas fa-dragon"></i> Snake</button>
+                <button class="lb-tab" data-game="memory"><i class="fas fa-brain"></i> Memory</button>
+                <button class="lb-tab" data-game="typing"><i class="fas fa-keyboard"></i> Typing</button>
+            </div>
+            <div class="leaderboard-table">
+                <div class="lb-header">
+                    <span>Rang</span>
+                    <span>Joueur</span>
+                    <span>Score</span>
+                    <span>Jeu</span>
+                </div>
+                <div class="lb-row gold-row">
+                    <span class="lb-rank"><i class="fas fa-crown" style="color: gold;"></i> 1</span>
+                    <span class="lb-player"><strong>DarkFitness_92</strong></span>
+                    <span class="lb-score">9 850 pts</span>
+                    <span class="lb-game">Snake</span>
+                </div>
+                <div class="lb-row silver-row">
+                    <span class="lb-rank"><i class="fas fa-medal" style="color: silver;"></i> 2</span>
+                    <span class="lb-player"><strong>MuscleMarie</strong></span>
+                    <span class="lb-score">8 720 pts</span>
+                    <span class="lb-game">Typing</span>
+                </div>
+                <div class="lb-row bronze-row">
+                    <span class="lb-rank"><i class="fas fa-medal" style="color: #cd7f32;"></i> 3</span>
+                    <span class="lb-player"><strong>ProGamer_Lucas</strong></span>
+                    <span class="lb-score">7 950 pts</span>
+                    <span class="lb-game">Quiz</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">4</span>
+                    <span class="lb-player">FitEmma</span>
+                    <span class="lb-score">7 200 pts</span>
+                    <span class="lb-game">Memory</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">5</span>
+                    <span class="lb-player">XYZ_Thomas</span>
+                    <span class="lb-score">6 880 pts</span>
+                    <span class="lb-game">Snake</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">6</span>
+                    <span class="lb-player">ProteinQueen</span>
+                    <span class="lb-score">6 450 pts</span>
+                    <span class="lb-game">Quiz</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">7</span>
+                    <span class="lb-player">HugoPower</span>
+                    <span class="lb-score">5 920 pts</span>
+                    <span class="lb-game">Typing</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">8</span>
+                    <span class="lb-player">ChloeGymLife</span>
+                    <span class="lb-score">5 340 pts</span>
+                    <span class="lb-game">Memory</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">9</span>
+                    <span class="lb-player">NathanBeast</span>
+                    <span class="lb-score">4 890 pts</span>
+                    <span class="lb-game">Snake</span>
+                </div>
+                <div class="lb-row">
+                    <span class="lb-rank">10</span>
+                    <span class="lb-player">JulieFit</span>
+                    <span class="lb-score">4 560 pts</span>
+                    <span class="lb-game">Quiz</span>
+                </div>
+            </div>
+            <p class="lb-info"><i class="fas fa-clock"></i> Classement mis a jour en temps reel - Fin du concours : 31 mars 2026</p>
+        </div>
+    </section>
+
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
