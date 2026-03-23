@@ -133,14 +133,7 @@ INSERT INTO produit (nom, description, prix, image_url, categorie_id) VALUES
 ('XYZ FOCUS', 'Nootropiques pour une concentration laser', 34.99, 'images/focus.png', 3),
 ('XYZ VEGAN', 'Pre-workout 100% vegetal certifie', 44.99, 'images/vegan.png', 4);
 
--- Insertion des codes promo
-INSERT INTO code_promo (code, type, valeur, date_expiration) VALUES
-('XYZ15', 'pourcentage', 15.00, '2026-12-31'),
-('XYZ10', 'pourcentage', 10.00, '2026-12-31'),
-('XYZ20', 'pourcentage', 20.00, '2026-12-31'),
-('XYZ25', 'pourcentage', 25.00, '2026-12-31'),
-('XYZFREE', 'livraison', 0.00, '2026-12-31'),
-('BIENVENUE', 'pourcentage', 10.00, '2026-12-31');
+-- Les codes promo sont crees depuis le panel admin
 
 -- Compte admin par defaut (mot de passe: admin123)
 -- Le hash correspond a password_hash('admin123', PASSWORD_DEFAULT)
