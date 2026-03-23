@@ -1600,6 +1600,42 @@ body {
     border-bottom: 1px solid #f0f0f0;
 }
 
+/* ===== PROMO FORM ADMIN ===== */
+.promo-form-wrapper {
+    background: var(--white);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--primary);
+}
+.promo-form h3 {
+    font-size: 1.2rem;
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+.promo-form h3 i { color: var(--primary); margin-right: 0.5rem; }
+.promo-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    color: var(--secondary);
+}
+.promo-form input, .promo-form select {
+    width: 100%;
+    padding: 0.6rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+.promo-form input:focus, .promo-form select:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
 /* ===== GAMES HUB ===== */
 .games-hero {
     background: linear-gradient(135deg, var(--secondary) 0%, #1a1a1a 100%);
