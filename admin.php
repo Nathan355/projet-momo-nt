@@ -1,19 +1,63 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require_once 'db.php';
+
+// Verifier si l'utilisateur est admin
+$is_admin = false;
+if (isset($_SESSION['user_id'])) {
+    $stmt = $pdo->prepare("SELECT is_admin FROM utilisateur WHERE id_utilisateur = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+    $is_admin = $user && $user['is_admin'] == 1;
+}
+
+// Traitement AJAX: mise a jour statut commande
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $is_admin && isset($_POST['action'])) {
+    header('Content-Type: application/json');
+
+    if ($_POST['action'] === 'update_statut') {
+        $id = intval($_POST['commande_id']);
+        $statut = $_POST['statut'];
+        $allowed = ['en-attente', 'en-cours', 'expediee', 'livree', 'annulee'];
+        if (in_array($statut, $allowed)) {
+            $stmt = $pdo->prepare("UPDATE commande SET statut = ? WHERE id_commande = ?");
+            $stmt->execute([$statut, $id]);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Statut invalide']);
+        }
+        exit;
+    }
+
+    if ($_POST['action'] === 'get_details') {
+        $id = intval($_POST['commande_id']);
+        $stmt = $pdo->prepare("SELECT * FROM commande WHERE id_commande = ?");
+        $stmt->execute([$id]);
+        $cmd = $stmt->fetch();
+        $stmt2 = $pdo->prepare("SELECT * FROM ligne_commande WHERE commande_id = ?");
+        $stmt2->execute([$id]);
+        $lignes = $stmt2->fetchAll();
+        echo json_encode(['success' => true, 'commande' => $cmd, 'lignes' => $lignes]);
+        exit;
+    }
+}
+
+// Si pas admin, afficher page de connexion admin
+if (!$is_admin):
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XYZ - Panel Admin</title>
+    <title>XYZ - Connexion Admin</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <i class="fas fa-bolt"></i> XYZ
-            </div>
+            <div class="logo"><i class="fas fa-bolt"></i> XYZ</div>
             <nav class="nav-menu">
                 <ul>
                     <li><a href="index.php">Accueil</a></li>
@@ -39,22 +83,104 @@
         </div>
     </header>
 
-    <div class="promo-marquee">
-        <div class="promo-marquee-content">
-            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
-            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
-            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
-            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
-            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
-            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
-            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
-            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
+    <section class="auth-section">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-icon"><i class="fas fa-shield-alt"></i></div>
+                <h1>Acces Admin</h1>
+                <p>Connectez-vous avec un compte administrateur pour acceder au panel.</p>
+            </div>
+            <?php if (isset($_SESSION['user_id']) && !$is_admin): ?>
+                <div class="auth-errors">
+                    <p><i class="fas fa-exclamation-circle"></i> Votre compte n'a pas les droits administrateur.</p>
+                </div>
+            <?php endif; ?>
+            <div class="result-actions" style="justify-content: center; margin-top: 1rem;">
+                <?php if (!isset($_SESSION['user_id'])): ?>
+                    <a href="login.php?redirect=admin.php" class="cta-button" style="text-decoration:none;"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
+                <?php endif; ?>
+                <a href="index.php" class="cta-button secondary" style="text-decoration:none;">Retour a l'accueil</a>
+            </div>
         </div>
-    </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section"><h4>XYZ</h4><p>Les meilleurs supplements pre-workout</p></div>
+            <div class="footer-section"><h4>LIENS RAPIDES</h4><ul><li><a href="boutique.php">Boutique</a></li></ul></div>
+            <div class="footer-section"><h4>CONTACT</h4><ul><li><i class="fas fa-envelope"></i> XYZ.Proteine@outlook.fr</li></ul></div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2026 XYZ - Tous droits reserves</p></div>
+    </footer>
+    <script src="js/script.js"></script>
+</body>
+</html>
+<?php
+exit;
+endif;
+
+// --- PANEL ADMIN (utilisateur admin connecte) ---
+
+// Recuperer les stats
+$nb_commandes = $pdo->query("SELECT COUNT(*) FROM commande")->fetchColumn();
+$revenus = $pdo->query("SELECT COALESCE(SUM(total), 0) FROM commande WHERE statut != 'annulee'")->fetchColumn();
+$nb_utilisateurs = $pdo->query("SELECT COUNT(*) FROM utilisateur WHERE is_admin = 0")->fetchColumn();
+$nb_produits = $pdo->query("SELECT COUNT(*) FROM produit")->fetchColumn();
+
+// Recuperer les commandes
+$commandes = $pdo->query("SELECT c.*, GROUP_CONCAT(CONCAT(lc.nom_produit, ' x', lc.quantite) SEPARATOR ', ') as articles FROM commande c LEFT JOIN ligne_commande lc ON c.id_commande = lc.commande_id GROUP BY c.id_commande ORDER BY c.date_commande DESC")->fetchAll();
+
+// Recuperer les produits
+$produits = $pdo->query("SELECT p.*, cat.nom as categorie_nom FROM produit p LEFT JOIN categorie cat ON p.categorie_id = cat.id_categorie")->fetchAll();
+
+// Recuperer les utilisateurs avec stats
+$utilisateurs = $pdo->query("SELECT u.*, COUNT(c.id_commande) as nb_commandes, COALESCE(SUM(c.total), 0) as total_depense FROM utilisateur u LEFT JOIN commande c ON u.id_utilisateur = c.utilisateur_id WHERE u.is_admin = 0 GROUP BY u.id_utilisateur ORDER BY u.date_inscription DESC")->fetchAll();
+
+$statut_labels = [
+    'en-attente' => 'En attente',
+    'en-cours' => 'En cours',
+    'expediee' => 'Expediee',
+    'livree' => 'Livree',
+    'annulee' => 'Annulee'
+];
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XYZ - Panel Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo"><i class="fas fa-bolt"></i> XYZ</div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="index.php">Accueil</a></li>
+                    <li><a href="boutique.php">Boutique</a></li>
+                    <li><a href="presentation.php">A Propos</a></li>
+                    <li><a href="contact.php">Contact</a></li>
+                    <li><a href="jeux.php">Jeux</a></li>
+                </ul>
+            </nav>
+            <div class="nav-icons">
+                <div class="user-menu">
+                    <span class="user-badge"><i class="fas fa-user-shield"></i> <?= htmlspecialchars($_SESSION['user_pseudo']) ?> (Admin)</span>
+                    <a href="logout.php" class="logout-link" title="Deconnexion"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+                <a href="admin.php" class="admin-icon active" title="Admin"><i class="fas fa-cog"></i></a>
+                <a href="panier.php" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="cart-count-badge">0</span></a>
+            </div>
+            <button class="nav-toggle" aria-label="Ouvrir le menu"><span class="hamburger"></span></button>
+        </div>
+    </header>
 
     <section class="admin-hero">
         <h1><i class="fas fa-shield-alt"></i> PANEL ADMINISTRATION</h1>
-        <p>Gerez vos commandes, produits et clients</p>
+        <p>Bienvenue <?= htmlspecialchars($_SESSION['user_pseudo']) ?> - Gerez vos commandes, produits et clients</p>
     </section>
 
     <section class="admin-dashboard">
@@ -62,28 +188,28 @@
             <div class="stat-card">
                 <i class="fas fa-shopping-bag"></i>
                 <div class="stat-info">
-                    <h3 id="stat-commandes">12</h3>
+                    <h3><?= $nb_commandes ?></h3>
                     <p>Commandes</p>
                 </div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-euro-sign"></i>
                 <div class="stat-info">
-                    <h3 id="stat-revenus">2 847.50</h3>
+                    <h3><?= number_format($revenus, 2, ',', ' ') ?></h3>
                     <p>Revenus</p>
                 </div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-users"></i>
                 <div class="stat-info">
-                    <h3 id="stat-clients">8</h3>
-                    <p>Clients</p>
+                    <h3><?= $nb_utilisateurs ?></h3>
+                    <p>Utilisateurs</p>
                 </div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-box"></i>
                 <div class="stat-info">
-                    <h3 id="stat-produits">6</h3>
+                    <h3><?= $nb_produits ?></h3>
                     <p>Produits</p>
                 </div>
             </div>
@@ -92,14 +218,14 @@
         <div class="admin-tabs">
             <button class="admin-tab active" data-tab="commandes"><i class="fas fa-receipt"></i> Commandes</button>
             <button class="admin-tab" data-tab="produits"><i class="fas fa-box"></i> Produits</button>
-            <button class="admin-tab" data-tab="clients"><i class="fas fa-users"></i> Clients</button>
+            <button class="admin-tab" data-tab="clients"><i class="fas fa-users"></i> Utilisateurs</button>
         </div>
 
         <div class="admin-content">
             <!-- Onglet Commandes -->
             <div class="admin-panel" id="panel-commandes">
                 <div class="panel-header">
-                    <h2>Liste des Commandes</h2>
+                    <h2>Liste des Commandes (<?= $nb_commandes ?>)</h2>
                     <div class="filter-bar">
                         <select id="filter-statut">
                             <option value="tous">Tous les statuts</option>
@@ -111,11 +237,17 @@
                         </select>
                     </div>
                 </div>
+                <?php if (empty($commandes)): ?>
+                    <div style="text-align:center; padding: 3rem; color: #666;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #ddd;"></i>
+                        <p>Aucune commande pour le moment.</p>
+                    </div>
+                <?php else: ?>
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
                         <thead>
                             <tr>
-                                <th>N° Commande</th>
+                                <th>N°</th>
                                 <th>Client</th>
                                 <th>Date</th>
                                 <th>Articles</th>
@@ -125,320 +257,90 @@
                             </tr>
                         </thead>
                         <tbody id="commandes-body">
-                            <tr>
-                                <td><strong>#CMD-001</strong></td>
-                                <td>Jean Dupont</td>
-                                <td>22/03/2026</td>
-                                <td>XYZ EXTREME x2</td>
-                                <td class="prix">99.98</td>
-                                <td><span class="statut-badge en-cours">En cours</span></td>
+                            <?php foreach ($commandes as $cmd): ?>
+                            <tr data-id="<?= $cmd['id_commande'] ?>">
+                                <td><strong>#CMD-<?= str_pad($cmd['id_commande'], 4, '0', STR_PAD_LEFT) ?></strong></td>
+                                <td><?= htmlspecialchars($cmd['prenom_client'] . ' ' . $cmd['nom_client']) ?></td>
+                                <td><?= date('d/m/Y H:i', strtotime($cmd['date_commande'])) ?></td>
+                                <td><?= htmlspecialchars($cmd['articles'] ?? 'N/A') ?></td>
+                                <td class="prix"><?= number_format($cmd['total'], 2) ?></td>
+                                <td><span class="statut-badge <?= $cmd['statut'] ?>"><?= $statut_labels[$cmd['statut']] ?? $cmd['statut'] ?></span></td>
                                 <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-action btn-voir" data-id="<?= $cmd['id_commande'] ?>" title="Voir"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-action btn-edit" data-id="<?= $cmd['id_commande'] ?>" data-statut="<?= $cmd['statut'] ?>" title="Modifier statut"><i class="fas fa-edit"></i></button>
                                 </td>
                             </tr>
-                            <tr>
-                                <td><strong>#CMD-002</strong></td>
-                                <td>Marie Martin</td>
-                                <td>21/03/2026</td>
-                                <td>XYZ ENERGY x1, XYZ CREATINE x3</td>
-                                <td class="prix">89.96</td>
-                                <td><span class="statut-badge en-attente">En attente</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-003</strong></td>
-                                <td>Lucas Bernard</td>
-                                <td>20/03/2026</td>
-                                <td>XYZ PUMP x1</td>
-                                <td class="prix">39.99</td>
-                                <td><span class="statut-badge expediee">Expediee</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-004</strong></td>
-                                <td>Sophie Leclerc</td>
-                                <td>19/03/2026</td>
-                                <td>XYZ VEGAN x2, XYZ FOCUS x1</td>
-                                <td class="prix">124.97</td>
-                                <td><span class="statut-badge livree">Livree</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-005</strong></td>
-                                <td>Pierre Moreau</td>
-                                <td>18/03/2026</td>
-                                <td>XYZ EXTREME x1, XYZ ENERGY x2</td>
-                                <td class="prix">109.97</td>
-                                <td><span class="statut-badge annulee">Annulee</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-006</strong></td>
-                                <td>Emma Petit</td>
-                                <td>17/03/2026</td>
-                                <td>XYZ CREATINE x5</td>
-                                <td class="prix">99.95</td>
-                                <td><span class="statut-badge en-cours">En cours</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-007</strong></td>
-                                <td>Thomas Roux</td>
-                                <td>16/03/2026</td>
-                                <td>XYZ FOCUS x2</td>
-                                <td class="prix">69.98</td>
-                                <td><span class="statut-badge livree">Livree</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-008</strong></td>
-                                <td>Chloe Durand</td>
-                                <td>15/03/2026</td>
-                                <td>XYZ PUMP x1, XYZ VEGAN x1</td>
-                                <td class="prix">84.98</td>
-                                <td><span class="statut-badge en-attente">En attente</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-009</strong></td>
-                                <td>Hugo Garnier</td>
-                                <td>14/03/2026</td>
-                                <td>XYZ EXTREME x3</td>
-                                <td class="prix">149.97</td>
-                                <td><span class="statut-badge expediee">Expediee</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-010</strong></td>
-                                <td>Lea Fontaine</td>
-                                <td>13/03/2026</td>
-                                <td>XYZ ENERGY x4</td>
-                                <td class="prix">119.96</td>
-                                <td><span class="statut-badge livree">Livree</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-011</strong></td>
-                                <td>Nathan Blanc</td>
-                                <td>12/03/2026</td>
-                                <td>XYZ CREATINE x2, XYZ PUMP x1</td>
-                                <td class="prix">79.97</td>
-                                <td><span class="statut-badge en-cours">En cours</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>#CMD-012</strong></td>
-                                <td>Julie Mercier</td>
-                                <td>11/03/2026</td>
-                                <td>XYZ VEGAN x1</td>
-                                <td class="prix">44.99</td>
-                                <td><span class="statut-badge livree">Livree</span></td>
-                                <td class="actions-cell">
-                                    <button class="btn-action btn-voir" title="Voir"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-action btn-edit" title="Modifier statut"><i class="fas fa-edit"></i></button>
-                                </td>
-                            </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+                <?php endif; ?>
             </div>
 
             <!-- Onglet Produits -->
             <div class="admin-panel hidden" id="panel-produits">
                 <div class="panel-header">
-                    <h2>Gestion des Produits</h2>
+                    <h2>Gestion des Produits (<?= $nb_produits ?>)</h2>
                 </div>
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
                         <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Nom</th>
-                                <th>Prix</th>
-                                <th>Categorie</th>
-                                <th>Stock</th>
-                                <th>Statut</th>
-                            </tr>
+                            <tr><th>Image</th><th>Nom</th><th>Prix</th><th>Categorie</th></tr>
                         </thead>
                         <tbody>
+                            <?php foreach ($produits as $prod): ?>
                             <tr>
-                                <td><img src="images/extreme.png" alt="XYZ EXTREME" class="admin-product-img"></td>
-                                <td><strong>XYZ EXTREME</strong></td>
-                                <td class="prix">49.99</td>
-                                <td>Energie</td>
-                                <td>156</td>
-                                <td><span class="statut-badge en-cours">En stock</span></td>
+                                <td><img src="<?= htmlspecialchars($prod['image_url'] ?? '') ?>" alt="<?= htmlspecialchars($prod['nom']) ?>" class="admin-product-img"></td>
+                                <td><strong><?= htmlspecialchars($prod['nom']) ?></strong><br><small style="color:#666;"><?= htmlspecialchars($prod['description'] ?? '') ?></small></td>
+                                <td class="prix"><?= number_format($prod['prix'], 2) ?></td>
+                                <td><?= htmlspecialchars($prod['categorie_nom'] ?? 'N/A') ?></td>
                             </tr>
-                            <tr>
-                                <td><img src="images/energy.png" alt="XYZ ENERGY" class="admin-product-img"></td>
-                                <td><strong>XYZ ENERGY</strong></td>
-                                <td class="prix">29.99</td>
-                                <td>Energie</td>
-                                <td>243</td>
-                                <td><span class="statut-badge en-cours">En stock</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="images/creatine.png" alt="XYZ CREATINE" class="admin-product-img"></td>
-                                <td><strong>XYZ CREATINE</strong></td>
-                                <td class="prix">19.99</td>
-                                <td>Force</td>
-                                <td>89</td>
-                                <td><span class="statut-badge en-cours">En stock</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="images/pump.png" alt="XYZ PUMP" class="admin-product-img"></td>
-                                <td><strong>XYZ PUMP</strong></td>
-                                <td class="prix">39.99</td>
-                                <td>Force</td>
-                                <td>12</td>
-                                <td><span class="statut-badge en-attente">Stock faible</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="images/focus.png" alt="XYZ FOCUS" class="admin-product-img"></td>
-                                <td><strong>XYZ FOCUS</strong></td>
-                                <td class="prix">34.99</td>
-                                <td>Nootropique</td>
-                                <td>178</td>
-                                <td><span class="statut-badge en-cours">En stock</span></td>
-                            </tr>
-                            <tr>
-                                <td><img src="images/vegan.png" alt="XYZ VEGAN" class="admin-product-img"></td>
-                                <td><strong>XYZ VEGAN</strong></td>
-                                <td class="prix">44.99</td>
-                                <td>Vegan</td>
-                                <td>67</td>
-                                <td><span class="statut-badge en-cours">En stock</span></td>
-                            </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Onglet Clients -->
+            <!-- Onglet Utilisateurs -->
             <div class="admin-panel hidden" id="panel-clients">
                 <div class="panel-header">
-                    <h2>Liste des Clients</h2>
+                    <h2>Utilisateurs inscrits (<?= $nb_utilisateurs ?>)</h2>
                 </div>
+                <?php if (empty($utilisateurs)): ?>
+                    <div style="text-align:center; padding: 3rem; color: #666;">
+                        <p>Aucun utilisateur inscrit.</p>
+                    </div>
+                <?php else: ?>
                 <div class="admin-table-wrapper">
                     <table class="admin-table">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nom</th>
-                                <th>Email</th>
-                                <th>Telephone</th>
-                                <th>Commandes</th>
-                                <th>Total depense</th>
-                            </tr>
+                            <tr><th>ID</th><th>Pseudo</th><th>Email</th><th>Inscription</th><th>Commandes</th><th>Total depense</th></tr>
                         </thead>
                         <tbody>
+                            <?php foreach ($utilisateurs as $u): ?>
                             <tr>
-                                <td>#1</td>
-                                <td><strong>Jean Dupont</strong></td>
-                                <td>jean.dupont@example.com</td>
-                                <td>01 23 45 67 89</td>
-                                <td>2</td>
-                                <td class="prix">199.96</td>
+                                <td>#<?= $u['id_utilisateur'] ?></td>
+                                <td><strong><?= htmlspecialchars($u['pseudo']) ?></strong></td>
+                                <td><?= htmlspecialchars($u['email']) ?></td>
+                                <td><?= date('d/m/Y', strtotime($u['date_inscription'])) ?></td>
+                                <td><?= $u['nb_commandes'] ?></td>
+                                <td class="prix"><?= number_format($u['total_depense'], 2) ?></td>
                             </tr>
-                            <tr>
-                                <td>#2</td>
-                                <td><strong>Marie Martin</strong></td>
-                                <td>marie.martin@example.com</td>
-                                <td>06 12 34 56 78</td>
-                                <td>1</td>
-                                <td class="prix">89.96</td>
-                            </tr>
-                            <tr>
-                                <td>#3</td>
-                                <td><strong>Lucas Bernard</strong></td>
-                                <td>lucas.bernard@example.com</td>
-                                <td>07 98 76 54 32</td>
-                                <td>1</td>
-                                <td class="prix">39.99</td>
-                            </tr>
-                            <tr>
-                                <td>#4</td>
-                                <td><strong>Sophie Leclerc</strong></td>
-                                <td>sophie.leclerc@example.com</td>
-                                <td>06 45 67 89 01</td>
-                                <td>3</td>
-                                <td class="prix">324.94</td>
-                            </tr>
-                            <tr>
-                                <td>#5</td>
-                                <td><strong>Pierre Moreau</strong></td>
-                                <td>pierre.moreau@example.com</td>
-                                <td>01 98 76 54 32</td>
-                                <td>1</td>
-                                <td class="prix">109.97</td>
-                            </tr>
-                            <tr>
-                                <td>#6</td>
-                                <td><strong>Emma Petit</strong></td>
-                                <td>emma.petit@example.com</td>
-                                <td>07 11 22 33 44</td>
-                                <td>2</td>
-                                <td class="prix">189.93</td>
-                            </tr>
-                            <tr>
-                                <td>#7</td>
-                                <td><strong>Thomas Roux</strong></td>
-                                <td>thomas.roux@example.com</td>
-                                <td>06 55 66 77 88</td>
-                                <td>1</td>
-                                <td class="prix">69.98</td>
-                            </tr>
-                            <tr>
-                                <td>#8</td>
-                                <td><strong>Chloe Durand</strong></td>
-                                <td>chloe.durand@example.com</td>
-                                <td>07 22 33 44 55</td>
-                                <td>1</td>
-                                <td class="prix">84.98</td>
-                            </tr>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
+                <?php endif; ?>
             </div>
         </div>
     </section>
 
-    <!-- Modal pour modifier le statut -->
+    <!-- Modal modifier statut -->
     <div class="modal-overlay" id="modal-statut" style="display:none;">
         <div class="modal-content">
             <h3><i class="fas fa-edit"></i> Modifier le statut</h3>
             <p id="modal-commande-id"></p>
+            <input type="hidden" id="modal-cmd-id">
             <select id="modal-select-statut">
                 <option value="en-attente">En attente</option>
                 <option value="en-cours">En cours</option>
@@ -453,7 +355,7 @@
         </div>
     </div>
 
-    <!-- Modal pour voir les details -->
+    <!-- Modal details commande -->
     <div class="modal-overlay" id="modal-details" style="display:none;">
         <div class="modal-content">
             <h3><i class="fas fa-info-circle"></i> Details de la commande</h3>
@@ -466,30 +368,11 @@
 
     <footer class="footer">
         <div class="footer-content">
-            <div class="footer-section">
-                <h4>XYZ</h4>
-                <p>Les meilleurs supplements pre-workout pour vos performances</p>
-            </div>
-            <div class="footer-section">
-                <h4>LIENS RAPIDES</h4>
-                <ul>
-                    <li><a href="boutique.php">Boutique</a></li>
-                    <li><a href="presentation.php">A Propos</a></li>
-                    <li><a href="mentions.php">Mentions legales</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>CONTACT</h4>
-                <ul>
-                    <li><a href="contact.php">Nous Contacter</a></li>
-                    <li><i class="fas fa-phone"></i> 01 23 45 67 89</li>
-                    <li><i class="fas fa-envelope"></i> XYZ.Proteine@outlook.fr</li>
-                </ul>
-            </div>
+            <div class="footer-section"><h4>XYZ</h4><p>Les meilleurs supplements pre-workout pour vos performances</p></div>
+            <div class="footer-section"><h4>LIENS RAPIDES</h4><ul><li><a href="boutique.php">Boutique</a></li><li><a href="presentation.php">A Propos</a></li><li><a href="mentions.php">Mentions legales</a></li></ul></div>
+            <div class="footer-section"><h4>CONTACT</h4><ul><li><a href="contact.php">Nous Contacter</a></li><li><i class="fas fa-phone"></i> 01 23 45 67 89</li><li><i class="fas fa-envelope"></i> XYZ.Proteine@outlook.fr</li></ul></div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 XYZ - Tous droits reserves | Livraison gratuite a partir de 50</p>
-        </div>
+        <div class="footer-bottom"><p>&copy; 2026 XYZ - Tous droits reserves</p></div>
     </footer>
 
     <div id="toast-notification" class="toast-notification"></div>
@@ -497,133 +380,123 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Onglets
-        const tabs = document.querySelectorAll('.admin-tab');
-        const panels = document.querySelectorAll('.admin-panel');
-
-        tabs.forEach(tab => {
+        document.querySelectorAll('.admin-tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                panels.forEach(p => p.classList.add('hidden'));
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
                 tab.classList.add('active');
                 document.getElementById('panel-' + tab.dataset.tab).classList.remove('hidden');
             });
         });
 
-        // Filtre par statut
+        // Filtre statut
         const filterStatut = document.getElementById('filter-statut');
-        filterStatut.addEventListener('change', () => {
-            const val = filterStatut.value;
-            const rows = document.querySelectorAll('#commandes-body tr');
-            rows.forEach(row => {
-                const badge = row.querySelector('.statut-badge');
-                if (val === 'tous' || badge.classList.contains(val)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
+        if (filterStatut) {
+            filterStatut.addEventListener('change', () => {
+                const val = filterStatut.value;
+                document.querySelectorAll('#commandes-body tr').forEach(row => {
+                    const badge = row.querySelector('.statut-badge');
+                    row.style.display = (val === 'tous' || badge.classList.contains(val)) ? '' : 'none';
+                });
             });
-        });
+        }
 
-        // Modal modification statut
-        let currentEditRow = null;
+        // Modal modifier statut (AJAX)
         const modalStatut = document.getElementById('modal-statut');
         const modalSelect = document.getElementById('modal-select-statut');
+        const labels = {'en-attente':'En attente','en-cours':'En cours','expediee':'Expediee','livree':'Livree','annulee':'Annulee'};
 
         document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                currentEditRow = e.target.closest('tr');
-                const cmdId = currentEditRow.querySelector('td strong').textContent;
-                const currentStatut = currentEditRow.querySelector('.statut-badge').classList[1];
-                document.getElementById('modal-commande-id').textContent = 'Commande: ' + cmdId;
-                modalSelect.value = currentStatut;
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+                const statut = btn.dataset.statut;
+                document.getElementById('modal-cmd-id').value = id;
+                document.getElementById('modal-commande-id').textContent = 'Commande #CMD-' + id.padStart(4, '0');
+                modalSelect.value = statut;
                 modalStatut.style.display = 'flex';
             });
         });
 
         document.getElementById('modal-save').addEventListener('click', () => {
-            if (currentEditRow) {
-                const newStatut = modalSelect.value;
-                const badge = currentEditRow.querySelector('.statut-badge');
-                badge.className = 'statut-badge ' + newStatut;
-                const labels = {
-                    'en-attente': 'En attente',
-                    'en-cours': 'En cours',
-                    'expediee': 'Expediee',
-                    'livree': 'Livree',
-                    'annulee': 'Annulee'
-                };
-                badge.textContent = labels[newStatut];
-                modalStatut.style.display = 'none';
-                showAdminToast('Statut mis a jour avec succes !');
-            }
-        });
+            const id = document.getElementById('modal-cmd-id').value;
+            const newStatut = modalSelect.value;
 
-        document.getElementById('modal-cancel').addEventListener('click', () => {
-            modalStatut.style.display = 'none';
-        });
-
-        // Modal details
-        const modalDetails = document.getElementById('modal-details');
-        document.querySelectorAll('.btn-voir').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const row = e.target.closest('tr');
-                const cells = row.querySelectorAll('td');
-                const html = `
-                    <div class="detail-grid">
-                        <div class="detail-item"><strong>N° Commande:</strong> ${cells[0].textContent}</div>
-                        <div class="detail-item"><strong>Client:</strong> ${cells[1].textContent}</div>
-                        <div class="detail-item"><strong>Date:</strong> ${cells[2].textContent}</div>
-                        <div class="detail-item"><strong>Articles:</strong> ${cells[3].textContent}</div>
-                        <div class="detail-item"><strong>Total:</strong> ${cells[4].textContent}</div>
-                        <div class="detail-item"><strong>Statut:</strong> ${cells[5].textContent}</div>
-                    </div>
-                `;
-                document.getElementById('modal-details-content').innerHTML = html;
-                modalDetails.style.display = 'flex';
+            fetch('admin.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'action=update_statut&commande_id=' + id + '&statut=' + newStatut
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    // Mettre a jour l'affichage
+                    const row = document.querySelector('tr[data-id="' + id + '"]');
+                    if (row) {
+                        const badge = row.querySelector('.statut-badge');
+                        badge.className = 'statut-badge ' + newStatut;
+                        badge.textContent = labels[newStatut];
+                        row.querySelector('.btn-edit').dataset.statut = newStatut;
+                    }
+                    modalStatut.style.display = 'none';
+                    showToast('Statut mis a jour !');
+                }
             });
         });
 
-        document.getElementById('modal-details-close').addEventListener('click', () => {
-            modalDetails.style.display = 'none';
+        document.getElementById('modal-cancel').addEventListener('click', () => modalStatut.style.display = 'none');
+
+        // Modal details (AJAX)
+        const modalDetails = document.getElementById('modal-details');
+        document.querySelectorAll('.btn-voir').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.dataset.id;
+                fetch('admin.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'action=get_details&commande_id=' + id
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const c = data.commande;
+                        let html = '<div class="detail-grid">';
+                        html += '<div class="detail-item"><strong>N°:</strong> #CMD-' + String(c.id_commande).padStart(4, '0') + '</div>';
+                        html += '<div class="detail-item"><strong>Client:</strong> ' + c.prenom_client + ' ' + c.nom_client + '</div>';
+                        html += '<div class="detail-item"><strong>Email:</strong> ' + c.email_client + '</div>';
+                        html += '<div class="detail-item"><strong>Tel:</strong> ' + (c.telephone_client || 'N/A') + '</div>';
+                        html += '<div class="detail-item"><strong>Adresse:</strong> ' + c.adresse_client + ', ' + c.code_postal_client + ' ' + c.ville_client + '</div>';
+                        html += '<div class="detail-item"><strong>Statut:</strong> <span class="statut-badge ' + c.statut + '">' + (labels[c.statut] || c.statut) + '</span></div>';
+                        html += '<div class="detail-item"><strong>Articles:</strong></div>';
+                        data.lignes.forEach(l => {
+                            html += '<div class="detail-item" style="padding-left:1rem;">- ' + l.nom_produit + ' x' + l.quantite + ' (' + parseFloat(l.prix_unitaire).toFixed(2) + ' &euro;/u)</div>';
+                        });
+                        html += '<div class="detail-item"><strong>Livraison:</strong> ' + (parseFloat(c.frais_livraison) === 0 ? 'GRATUITE' : parseFloat(c.frais_livraison).toFixed(2) + ' &euro;') + '</div>';
+                        html += '<div class="detail-item"><strong>Total:</strong> <span style="color:var(--primary); font-weight:900; font-size:1.2rem;">' + parseFloat(c.total).toFixed(2) + ' &euro;</span></div>';
+                        html += '</div>';
+                        document.getElementById('modal-details-content').innerHTML = html;
+                        modalDetails.style.display = 'flex';
+                    }
+                });
+            });
         });
+
+        document.getElementById('modal-details-close').addEventListener('click', () => modalDetails.style.display = 'none');
 
         // Fermer modals au clic exterieur
         [modalStatut, modalDetails].forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) modal.style.display = 'none';
-            });
+            modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
         });
 
-        function showAdminToast(message) {
-            const toast = document.getElementById('toast-notification');
-            if (toast) {
-                toast.textContent = message;
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
-            }
+        function showToast(msg) {
+            const t = document.getElementById('toast-notification');
+            if (t) { t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
         }
 
         // Menu burger
         const navToggle = document.querySelector('.nav-toggle');
         const navMenu = document.querySelector('.nav-menu');
         if (navToggle && navMenu) {
-            navToggle.addEventListener('click', () => {
-                navMenu.classList.toggle('nav-active');
-                navToggle.classList.toggle('is-active');
-            });
-        }
-
-        // Cart badge
-        let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        const cartBadge = document.querySelector('.cart-count-badge');
-        const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-        if (cartBadge) {
-            if (totalItems > 0) {
-                cartBadge.textContent = totalItems;
-                cartBadge.style.display = 'flex';
-            } else {
-                cartBadge.style.display = 'none';
-            }
+            navToggle.addEventListener('click', () => { navMenu.classList.toggle('nav-active'); navToggle.classList.toggle('is-active'); });
         }
     });
     </script>
