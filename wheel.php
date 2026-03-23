@@ -57,6 +57,17 @@
     </section>
 
     <section class="game-container">
+        <?php if (!isset($_SESSION['user_id'])): ?>
+        <div class="login-required-box">
+            <i class="fas fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+            <h2>Connexion requise</h2>
+            <p>Vous devez etre connecte pour tourner la roue et tenter de gagner des produits !</p>
+            <div class="result-actions">
+                <a href="login.php?redirect=wheel.php" class="cta-button"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
+                <a href="register.php" class="cta-button secondary"><i class="fas fa-user-plus"></i> Creer un compte</a>
+            </div>
+        </div>
+        <?php else: ?>
         <div class="wheel-wrapper">
             <div class="wheel-pointer"><i class="fas fa-caret-down"></i></div>
             <canvas id="wheel-canvas" width="400" height="400"></canvas>
@@ -71,10 +82,11 @@
                 <div id="wheel-result-code" class="wheel-code"></div>
                 <div class="result-actions">
                     <button class="cta-button" id="wheel-replay"><i class="fas fa-redo"></i> Retenter</button>
-                    <a href="boutique.php" class="cta-button secondary"><i class="fas fa-shopping-bag"></i> Boutique</a>
+                    <a href="panier.php" class="cta-button secondary"><i class="fas fa-shopping-cart"></i> Voir mon panier</a>
                 </div>
             </div>
         </div>
+        <?php endif; ?>
     </section>
 
     <footer class="footer">
@@ -90,18 +102,30 @@
 
     <script>
     const segments = [
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
         { text: '-10%', color: '#d9042f', code: 'XYZ10', type: 'code' },
         { text: 'Perdu', color: '#333', code: '', type: 'lose' },
-        { text: 'XYZ\nCREATINE', color: '#4CAF50', code: '', type: 'product', desc: 'Un pot de XYZ CREATINE offert !' },
         { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'XYZ\nCREATINE', color: '#4CAF50', code: '', type: 'product', desc: 'Un pot de XYZ CREATINE offert !', productId: 'xyz-creatine', productName: 'XYZ CREATINE', productPrice: 0, productImage: 'images/creatine.png' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
         { text: '-15%', color: '#FFD600', code: 'XYZ15', type: 'code' },
-        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
-        { text: 'XYZ\nENERGY', color: '#2196F3', code: '', type: 'product', desc: 'Un pot de XYZ ENERGY offert !' },
-        { text: 'Livraison\nGratuite', color: '#E91E63', code: 'XYZFREE', type: 'code' },
         { text: 'Perdu', color: '#555', code: '', type: 'lose' },
-        { text: 'Shaker\nXYZ', color: '#FF9800', code: '', type: 'product', desc: 'Un shaker XYZ premium offert !' },
         { text: 'Perdu', color: '#333', code: '', type: 'lose' },
-        { text: 'XYZ\nEXTREME', color: '#9C27B0', code: '', type: 'product', desc: 'Un pot de XYZ EXTREME offert !' }
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'XYZ\nENERGY', color: '#2196F3', code: '', type: 'product', desc: 'Un pot de XYZ ENERGY offert !', productId: 'xyz-energy', productName: 'XYZ ENERGY', productPrice: 0, productImage: 'images/energy.png' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Livraison\nGratuite', color: '#E91E63', code: 'XYZFREE', type: 'code' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'Shaker\nXYZ', color: '#FF9800', code: '', type: 'product', desc: 'Un shaker XYZ offert !', productId: 'shaker-xyz', productName: 'Shaker XYZ', productPrice: 0, productImage: 'images/extreme.png' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'XYZ\nEXTREME', color: '#9C27B0', code: '', type: 'product', desc: 'Un pot de XYZ EXTREME offert !', productId: 'xyz-extreme', productName: 'XYZ EXTREME', productPrice: 0, productImage: 'images/extreme.png' }
     ];
 
     const canvas = document.getElementById('wheel-canvas');
@@ -227,8 +251,27 @@
             titleEl.textContent = 'INCROYABLE !';
             titleEl.style.color = winner.color;
             textEl.textContent = winner.desc;
-            codeEl.innerHTML = '<i class="fas fa-envelope"></i> Envoyez un mail a <strong>XYZ.Proteine@outlook.fr</strong> avec une capture d\'ecran pour reclamer votre lot !';
+            codeEl.innerHTML = '<i class="fas fa-shopping-cart"></i> Le produit a ete <strong>ajoute a votre panier</strong> gratuitement !';
             codeEl.style.display = 'block';
+            // Ajouter le produit au panier localStorage
+            let cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            const existing = cartItems.find(item => item.id === winner.productId);
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cartItems.push({
+                    id: winner.productId,
+                    name: winner.productName + ' (OFFERT)',
+                    price: winner.productPrice,
+                    image: winner.productImage,
+                    quantity: 1
+                });
+            }
+            localStorage.setItem('cartItems', JSON.stringify(cartItems));
+            // Mettre a jour le badge
+            const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.querySelector('.cart-count-badge');
+            if (badge && totalItems > 0) { badge.textContent = totalItems; badge.style.display = 'flex'; }
         } else {
             iconDiv.innerHTML = '<i class="fas fa-sad-tear" style="font-size: 4rem; color: #999;"></i>';
             titleEl.textContent = 'Pas de chance !';
