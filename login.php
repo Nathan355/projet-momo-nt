@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // Redirection vers la page d'ou on venait
             $redirect = $_GET['redirect'] ?? 'index.php';
-            $allowed = ['index.php', 'wheel.php', 'jeux.php', 'boutique.php', 'quiz.php', 'snake.php', 'memory-game.php', 'typing.php'];
+            $allowed = ['index.php', 'wheel.php', 'jeux.php', 'boutique.php', 'quiz.php', 'snake.php', 'memory-game.php', 'typing.php', 'admin.php', 'checkout.php'];
             if (!in_array($redirect, $allowed)) {
                 $redirect = 'index.php';
             }
