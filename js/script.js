@@ -197,8 +197,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (target.classList.contains('plus')) {
                 item.quantity++;
             } else if (target.classList.contains('minus')) {
-                item.quantity--;
-                if (item && item.quantity > 1) {
+                if (item.quantity > 1) {
                     item.quantity--;
                 } else {
                     cartItems = cartItems.filter(i => i.id !== itemId);
