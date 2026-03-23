@@ -29,7 +29,20 @@
             <button class="nav-toggle" aria-label="Ouvrir le menu"><span class="hamburger"></span></button>
         </div>
     </header>
- 
+
+    <div class="promo-marquee">
+        <div class="promo-marquee-content">
+            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
+            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
+            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
+            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
+            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
+            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
+            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
+            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
+        </div>
+    </div>
+
     <main>
         <section class="cart-section">
             <h1>Votre Panier</h1>

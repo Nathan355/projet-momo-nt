@@ -28,6 +28,19 @@
         </div>
     </header>
 
+    <div class="promo-marquee">
+        <div class="promo-marquee-content">
+            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
+            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
+            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
+            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
+            <span><i class="fas fa-fire"></i> CODE PROMO : <strong>XYZ15</strong> = -15% sur le produit de votre choix !</span>
+            <span><i class="fas fa-gamepad"></i> Jouez a nos mini-jeux et tentez de gagner une PS5 chaque mois !</span>
+            <span><i class="fas fa-gift"></i> Roue de la Chance : des produits XYZ a gagner !</span>
+            <span><i class="fas fa-truck"></i> Livraison GRATUITE des 50 d'achat !</span>
+        </div>
+    </div>
+
     <section class="game-page-hero">
         <a href="jeux.php" class="back-link"><i class="fas fa-arrow-left"></i> Retour aux jeux</a>
         <h1><i class="fas fa-circle-notch"></i> ROUE DE LA CHANCE</h1>

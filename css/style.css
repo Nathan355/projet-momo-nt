@@ -2227,6 +2227,45 @@ body {
     }
 }
 
+/* ===== PROMO MARQUEE ===== */
+.promo-marquee {
+    background: linear-gradient(135deg, var(--secondary) 0%, #1a1a1a 100%);
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 2px solid var(--primary);
+}
+.promo-marquee-content {
+    display: inline-block;
+    animation: marquee-scroll 30s linear infinite;
+    padding: 0.6rem 0;
+}
+.promo-marquee-content span {
+    color: var(--white);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-right: 3rem;
+    letter-spacing: 0.5px;
+}
+.promo-marquee-content span i {
+    color: var(--primary);
+    margin-right: 0.4rem;
+}
+.promo-marquee-content span strong {
+    color: var(--accent);
+    background: rgba(255, 214, 0, 0.15);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+}
+
+@keyframes marquee-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.promo-marquee:hover .promo-marquee-content {
+    animation-play-state: paused;
+}
+
 /* ===== COOKIE BANNER ===== */
 .cookie-banner {
     position: fixed;
