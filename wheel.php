@@ -81,18 +81,18 @@
 
     <script>
     const segments = [
-        { text: '-5%', color: '#d9042f', code: 'XYZ5' },
-        { text: 'Perdu', color: '#333', code: '' },
-        { text: '-10%', color: '#FFD600', code: 'XYZ10' },
-        { text: 'Perdu', color: '#555', code: '' },
-        { text: '-15%', color: '#4CAF50', code: 'XYZ15' },
-        { text: 'Perdu', color: '#333', code: '' },
-        { text: '-20%', color: '#E91E63', code: 'XYZ20' },
-        { text: 'Livraison\nGratuite', color: '#2196F3', code: 'XYZFREE' },
-        { text: 'Perdu', color: '#555', code: '' },
-        { text: '-25%', color: '#9C27B0', code: 'XYZ25' },
-        { text: 'Perdu', color: '#333', code: '' },
-        { text: 'Shaker\nOffert', color: '#FF9800', code: 'XYZSHAKER' }
+        { text: '-10%', color: '#d9042f', code: 'XYZ10', type: 'code' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'XYZ\nCREATINE', color: '#4CAF50', code: '', type: 'product', desc: 'Un pot de XYZ CREATINE offert !' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: '-15%', color: '#FFD600', code: 'XYZ15', type: 'code' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'XYZ\nENERGY', color: '#2196F3', code: '', type: 'product', desc: 'Un pot de XYZ ENERGY offert !' },
+        { text: 'Livraison\nGratuite', color: '#E91E63', code: 'XYZFREE', type: 'code' },
+        { text: 'Perdu', color: '#555', code: '', type: 'lose' },
+        { text: 'Shaker\nXYZ', color: '#FF9800', code: '', type: 'product', desc: 'Un shaker XYZ premium offert !' },
+        { text: 'Perdu', color: '#333', code: '', type: 'lose' },
+        { text: 'XYZ\nEXTREME', color: '#9C27B0', code: '', type: 'product', desc: 'Un pot de XYZ EXTREME offert !' }
     ];
 
     const canvas = document.getElementById('wheel-canvas');
@@ -206,18 +206,25 @@
         const textEl = document.getElementById('wheel-result-text');
         const codeEl = document.getElementById('wheel-result-code');
 
-        if (winner.code) {
-            iconDiv.innerHTML = '<i class="fas fa-gift" style="font-size: 4rem; color: ' + winner.color + ';"></i>';
+        if (winner.type === 'code') {
+            iconDiv.innerHTML = '<i class="fas fa-ticket-alt" style="font-size: 4rem; color: ' + winner.color + ';"></i>';
             titleEl.textContent = 'Felicitations !';
             titleEl.style.color = winner.color;
             textEl.textContent = 'Vous avez gagne : ' + winner.text.replace('\n', ' ') + ' !';
             codeEl.innerHTML = 'Code promo : <strong>' + winner.code + '</strong>';
             codeEl.style.display = 'block';
+        } else if (winner.type === 'product') {
+            iconDiv.innerHTML = '<i class="fas fa-gift" style="font-size: 4rem; color: ' + winner.color + ';"></i>';
+            titleEl.textContent = 'INCROYABLE !';
+            titleEl.style.color = winner.color;
+            textEl.textContent = winner.desc;
+            codeEl.innerHTML = '<i class="fas fa-envelope"></i> Envoyez un mail a <strong>XYZ.Proteine@outlook.fr</strong> avec une capture d\'ecran pour reclamer votre lot !';
+            codeEl.style.display = 'block';
         } else {
             iconDiv.innerHTML = '<i class="fas fa-sad-tear" style="font-size: 4rem; color: #999;"></i>';
             titleEl.textContent = 'Pas de chance !';
             titleEl.style.color = '#999';
-            textEl.textContent = 'Retentez votre chance !';
+            textEl.textContent = 'Retentez votre chance, des produits XYZ sont a gagner !';
             codeEl.style.display = 'none';
         }
 
