@@ -2663,3 +2663,228 @@ body {
         justify-content: flex-start;
     }
 }
+
+/* ===== AUTH PAGES (Login / Register) ===== */
+.auth-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, var(--light) 100%);
+}
+.auth-container {
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    padding: 3rem;
+    width: 100%;
+    max-width: 480px;
+}
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.auth-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, rgba(217, 4, 47, 0.1), rgba(217, 4, 47, 0.05));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+.auth-icon i {
+    font-size: 2rem;
+    color: var(--primary);
+}
+.auth-header h1 {
+    font-size: 2rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+.auth-header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.auth-errors {
+    background: #FFEBEE;
+    border: 1px solid #FFCDD2;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.auth-errors p {
+    color: #C62828;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+.auth-errors p:last-child { margin-bottom: 0; }
+.auth-errors i { margin-right: 0.4rem; }
+
+.auth-info {
+    background: #E3F2FD;
+    border: 1px solid #BBDEFB;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.auth-info p {
+    color: #1565C0;
+    font-size: 0.9rem;
+}
+.auth-info i { margin-right: 0.4rem; }
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.auth-form-group {
+    display: flex;
+    flex-direction: column;
+}
+.auth-form-group label {
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+}
+.auth-form-group label i {
+    color: var(--primary);
+    margin-right: 0.4rem;
+    width: 18px;
+}
+.auth-form-group input {
+    padding: 0.9rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+}
+.auth-form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(217, 4, 47, 0.1);
+}
+.auth-form-group input::placeholder {
+    color: #aaa;
+}
+
+.auth-submit {
+    width: 100%;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #eee;
+}
+.auth-footer p {
+    color: #666;
+}
+.auth-footer a {
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+.auth-footer a:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+}
+
+/* ===== USER MENU NAVBAR ===== */
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.user-badge {
+    color: var(--white);
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.user-badge i {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+.logout-link {
+    color: #ccc;
+    font-size: 1rem;
+    transition: color 0.3s;
+    text-decoration: none;
+}
+.logout-link:hover {
+    color: var(--primary);
+}
+.login-link {
+    color: var(--white);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+.login-link:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+.login-link i {
+    font-size: 0.9rem;
+}
+
+/* ===== LOGIN REQUIRED BOX ===== */
+.login-required-box {
+    text-align: center;
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+.login-required-box h2 {
+    font-size: 1.8rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+.login-required-box p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+.login-required-box .result-actions a {
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 2rem 1.5rem;
+    }
+    .auth-header h1 {
+        font-size: 1.6rem;
+    }
+    .user-badge span {
+        display: none;
+    }
+    .login-link span {
+        display: none;
+    }
+}
