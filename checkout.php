@@ -15,17 +15,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ville = trim($_POST['ville'] ?? '');
     $code_postal = trim($_POST['code_postal'] ?? '');
     $cart_json = $_POST['cart_data'] ?? '[]';
+    $code_promo_input = strtoupper(trim($_POST['code_promo'] ?? ''));
 
     // Validation
     if (empty($nom)) $errors[] = "Le nom est requis.";
     if (empty($prenom)) $errors[] = "Le prenom est requis.";
     if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email invalide.";
+    if (!empty($telephone) && !preg_match('/^[0-9\s\+\-\.]{6,20}$/', $telephone)) $errors[] = "Numero de telephone invalide.";
     if (empty($adresse)) $errors[] = "L'adresse est requise.";
     if (empty($ville)) $errors[] = "La ville est requise.";
-    if (empty($code_postal)) $errors[] = "Le code postal est requis.";
+    if (empty($code_postal) || !preg_match('/^[0-9]{4,5}$/', $code_postal)) $errors[] = "Code postal invalide.";
 
     $cart = json_decode($cart_json, true);
     if (empty($cart)) $errors[] = "Votre panier est vide.";
+
+    // Valider le code promo
+    $promo = null;
+    $reduction = 0;
+    if (!empty($code_promo_input)) {
+        $stmt = $pdo->prepare("SELECT * FROM code_promo WHERE code = ? AND actif = 1");
+        $stmt->execute([$code_promo_input]);
+        $promo = $stmt->fetch();
+        if (!$promo) {
+            $errors[] = "Code promo invalide ou expire.";
+        } elseif ($promo['date_expiration'] && $promo['date_expiration'] < date('Y-m-d')) {
+            $errors[] = "Ce code promo est expire.";
+            $promo = null;
+        } elseif ($promo['nb_utilisations_max'] && $promo['nb_utilisations'] >= $promo['nb_utilisations_max']) {
+            $errors[] = "Ce code promo a atteint son nombre maximum d'utilisations.";
+            $promo = null;
+        }
+    }
 
     if (empty($errors)) {
         try {
@@ -37,7 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $subtotal += floatval($item['price']) * intval($item['quantity']);
             }
             $frais_livraison = $subtotal >= 50 ? 0 : 5.99;
-            $total = $subtotal + $frais_livraison;
+
+            // Appliquer le code promo
+            if ($promo) {
+                if ($promo['type'] === 'pourcentage') {
+                    $reduction = $subtotal * ($promo['valeur'] / 100);
+                } elseif ($promo['type'] === 'montant') {
+                    $reduction = min($promo['valeur'], $subtotal);
+                } elseif ($promo['type'] === 'livraison') {
+                    $frais_livraison = 0;
+                }
+                // Incrementer le compteur d'utilisations
+                $pdo->prepare("UPDATE code_promo SET nb_utilisations = nb_utilisations + 1 WHERE id_code = ?")->execute([$promo['id_code']]);
+            }
+
+            $total = $subtotal - $reduction + $frais_livraison;
 
             // Inserer la commande
             $user_id = $_SESSION['user_id'] ?? null;
@@ -173,6 +207,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
 
+                    <div class="form-group" style="margin-top: 0.5rem;">
+                        <label for="code_promo"><i class="fas fa-tags" style="color: var(--primary);"></i> Code promo (optionnel)</label>
+                        <input type="text" id="code_promo" name="code_promo" placeholder="Ex: XYZ15" value="<?= htmlspecialchars($code_promo_input ?? '') ?>" style="text-transform: uppercase;">
+                    </div>
+
                     <input type="hidden" name="cart_data" id="cart_data" value="">
 
                     <button type="submit" class="cta-button checkout-submit-btn" id="checkout-submit">
@@ -186,6 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div id="checkout-items"></div>
                     <div class="summary-divider"></div>
                     <div class="summary-row"><span>Sous-total</span><span id="checkout-subtotal">0.00</span></div>
+                    <div class="summary-row" id="promo-row" style="display:none; color:#4CAF50;"><span>Reduction</span><span id="checkout-reduction">-0.00</span></div>
                     <div class="summary-row"><span>Livraison</span><span id="checkout-shipping">5.99</span></div>
                     <div class="summary-divider"></div>
                     <div class="summary-row total"><span>Total</span><span id="checkout-total">0.00</span></div>
