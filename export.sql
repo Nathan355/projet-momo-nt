@@ -1,5 +1,3 @@
--- Export SQL pour la base de données XYZ E-commerce
-
 CREATE DATABASE IF NOT EXISTS xyz_ecommerce;
 USE xyz_ecommerce;
 
@@ -36,6 +34,7 @@ CREATE TABLE commande (
     client_id INT,
     date_commande DATETIME DEFAULT CURRENT_TIMESTAMP,
     total DECIMAL(10,2) NOT NULL,
+    statut ENUM('en-attente', 'en-cours', 'expediee', 'livree', 'annulee') DEFAULT 'en-attente',
     FOREIGN KEY (client_id) REFERENCES client(id_client)
 );
 
